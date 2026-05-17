@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto CINFO 2.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #008996;
+            --secondary: #004b54;
+            --accent: #00d1e0;
+            --text: #333;
+            --bg-light: #f4f7f6;
+            --white: #ffffff;
+            --error: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            background-color: #1a1a2e;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ── SLIDER SHELL ── */
+        .slider-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* slide content fills but scrolls if needed */
+        .slide-inner {
+            flex: 1;
+            padding: 60px 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* ── HEADER (inside each slide) ── */
+        .slide-header {
+            background: var(--white);
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .logo-fhemig { height: 50px; }
+
+        /* ── HERO SLIDE ── */
+        .slide.hero-slide {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        .slide.hero-slide .slide-header {
+            background: rgba(255,255,255,0.15);
+            box-shadow: none;
+        }
+        .slide.hero-slide .slide-header div { color: var(--white); }
+        .hero-content {
+            color: var(--white);
+            text-align: center;
+        }
+        .hero-content h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
+        .hero-content p { font-size: 1.2rem; opacity: 0.9; }
+        .hero-content p:first-child { margin-bottom: 8px; }
+
+        /* ── SECTION STYLES (reused per slide) ── */
+        .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+        h2 { color: var(--primary); font-size: 2.2rem; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; }
+        h3 { color: var(--secondary); margin: 25px 0 15px; font-size: 1.4rem; border-left: 5px solid var(--accent); padding-left: 15px; }
+        h4 { color: var(--primary); margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .mascote-box { width: 150px; float: right; margin-left: 20px; transition: transform 0.3s; }
+        .mascote-box:hover { transform: scale(1.1); }
+        .imagem-box { width: 600px; float: right; margin-left: 0px; transition: transform 0.3s; }
+        .imagem-box:hover { transform: scale(1.1); }
+
+        .metaphor {
+            background: #e8f4f5;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 8px solid var(--primary);
+            margin: 20px 0;
+        }
+
+        .grid-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .card.wrong { border-top: 5px solid var(--error); }
+        .card.right { border-top: 5px solid var(--primary); }
+
+        .timeline {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .timeline-item {
+            background: var(--white);
+            padding: 16px;
+            border-radius: 10px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .date-badge {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            min-width: 120px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        ul { list-style: none; }
+        li { margin-bottom: 10px; padding-left: 25px; position: relative; }
+        li::before { content: '✔'; position: absolute; left: 0; color: var(--primary); font-weight: bold; }
+        .card.wrong li::before { content: '❌'; color: var(--error); }
+
+        .btn-cta {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: background 0.3s;
+        }
+        .btn-cta:hover { background: var(--secondary); }
+
+        /* slide with pink bg */
+        .slide.slide-pink { background-color: #fff1f1; }
+        .slide.slide-blue { background-color: #eefbff; }
+
+        /* ── NAVIGATION ── */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,73,84,0.95);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 12px 30px;
+            z-index: 9999;
+        }
+
+        .nav-btn {
+            background: var(--accent);
+            color: var(--secondary);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 24px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 0.5px;
+        }
+        .nav-btn:hover { background: #00f5ff; transform: scale(1.05); }
+        .nav-btn:disabled { background: #3a6870; color: #7aaab0; cursor: not-allowed; transform: none; }
+
+        .slide-counter {
+            color: var(--white);
+            font-size: 0.9rem;
+            min-width: 80px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .dot.active {
+            background: var(--accent);
+            transform: scale(1.4);
+        }
+
+        /* footer inside last slide */
+        .slide-footer { text-align: center; padding: 30px; background: #eee; font-size: 0.9rem; flex-shrink: 0; }
+
+        /* bottom padding to not hide behind nav bar */
+        .slide-inner { padding-bottom: 80px; }
+
+        @media (max-width: 600px) {
+            .grid-compare { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .mascote-box { width: 100px; }
+            .imagem-box { width: 100%; float: none; }
+            .slide-inner { padding: 30px 5% 80px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slider-wrapper">
+    <div class="slides-track" id="slidesTrack">
+
+        <!-- SLIDE 1: Hero -->
+        <div class="slide hero-slide">
+            <div class="slide-header">
+                <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+                <div style="font-weight: 600;">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+            </div>
+            <div class="slide-inner" style="justify-content: center;">
+                <div class="hero-content container">
+                    <p>18 de maio de 2026</p>
+                    <h1>PROJETO CINFO 2.0</h1>
+                    <p>Não são apenas novos BIs. É uma nova forma de trabalhar com a informação.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: O que houve? -->
+        <div class="slide">
+            <div class="slide-header">
+                <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+                <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+            </div>
+            <div class="slide-inner">
+                <div class="container">
+                    <img src="fhemigo triste.png" alt="Mascote Triste" class="mascote-box">
+                    <h2>O que houve?</h2>
+                    <div class="card wrong">
+                        <p><strong>Dia 05/05:</strong> Consultas da CINFO derrubam o ambiente <strong>FHEPROD</strong>.</p>
+                        <p>Este incidente gerou o acionamento imediato pela <strong>GTIC</strong> e pela <strong>Phillips</strong>, evidenciando uma fragilidade crítica em nosso fluxo atual.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Qual é a situação? -->
+        <div class="slide">
+            <div class="slide-header">
+                <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+                <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+            </div>
+            <div class="slide-inner">
+                <div class="container">
+                    <img src="fhemigo investigando.png" alt="Mascote Investigando" class="mascote-box">
+                    <h2>Qual é a situação?</h2>
+                    <ul>
+                        <li>A CINFO atua em um ambiente hospitalar crítico (Sistemas ERP/Tasy) que não permite impactos de performance.</li>
+                        <li>Crescimento acelerado dos BIs: BE, Leitos, FF e Descentralização.</li>
+                        <li>Exigência de agilidade, confiabilidade e escalabilidade.</li>
+                    </ul>
+
+                    <div class="metaphor">
+                        <strong>Problema Central:</strong> Como evoluir o BI sem travar o Tasy e sem tornar a manutenção insustentável?
+                    </div>
+
+                    <h3>Termos Técnicos</h3>
+                    <p>Atualmente não temos <strong>Staging</strong> (camadas intermediárias).</p>
+                    <div class="grid-compare">
+                        <div class="card wrong"><strong>Como está:</strong><br>ERP (FHEPROD) → Power BI ❌</div>
+                        <div class="card right"><strong>Como deve ser:</strong><br>ERP → STAGING → Power BI ✅</div>
+                    </div>
+                    <img src="hist BE.png" alt="Imagem ilustrativa de ferramenta">
+                    <img src="hist BE2.png" alt="Imagem ilustrativa de ferramenta">
+                </div>
+            </div>
+        </div>
+    <!-- SLIDE 4: Com quais recursos a CINFO trabalha hoje? -->
+    <div class="slide slide-pink">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="container">
+          <img src="fhemigo triste.png" alt="Mascote Desconfiado" class="mascote-box">
+          <h2>Com quais recursos a CINFO trabalha hoje?</h2>
+          <h3>Arquitetura de Dados</h3>
+          <ul>
+            <li>3 bancos OLTP: FHEPROD (Real), FHEHOM (Dump Março) e FHETRN (Dump Março).</li>
+            <li><strong>Ausência de ODS (Operational Data Store):</strong> não temos camada analítica intermediária dedicada (staging).</li>
+            <li><strong>Staging:</strong> tabelas derivadas e estruturadas para análise, abastecidas a partir do ERP.</li>
+          </ul>
+          <div class="metaphor">
+            <strong>Metáfora:</strong> Imagine tentar contar todos os grãos de feijão no estoque de um restaurante enquanto os chefs estão tentando cozinhar. Você atrapalha a cozinha (Produção) e demora mais para contar (Análise).
+          </div>
+          <h4>Consequências:</h4>
+          <ul>
+            <li>Uso de banco de produção (OLTP) para fins analíticos (OLAP).</li>
+            <li>Sobrecarga: o Tasy foi feito para transações rápidas (inserir/atualizar), não para varrer milhões de linhas ou cruzar tabelas gigantes.</li>
+            <li>Risco de lentidão ou indisponibilidade do sistema hospitalar.</li>
+            <li>O problema não é a existência dos BIs — é que eles estão ligados no banco errado.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- SLIDE 5: Quais são os processos de trabalho atuais da CINFO? -->
+    <div class="slide slide-pink">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="container">
+          <img src="fhemigo desconfiado.png" alt="Mascote Desconfiado" class="mascote-box">
+          <h2>Quais são os processos de trabalho atuais da CINFO?</h2>
+          <h3>Processos CINFO</h3>
+          <ul>
+            <li>Consultas diretas e pesadas no FHEPROD: queries complexas importadas para o BI.</li>
+            <li>Regras de negócio não documentadas e espalhadas: muitas queries, transformações, colunas personalizadas e medidas DAX diferentes.</li>
+            <li>Alterações diretas em arquivos PBIX publicadas manualmente no servidor 95.</li>
+          </ul>
+          <div class="metaphor">
+            Hoje não aproveitamos todas as inovações disponíveis do Microsoft Fabric Pro nem todos os recursos de otimização dentro do Power BI.
+          </div>
+          <h4>Consequências:</h4>
+          <ul>
+            <li>Sobrecarga do ERP assistencial e risco direto à operação hospitalar.</li>
+            <li>Opacidade dos cálculos e agregações, dificultando a auditoria e a correção dos resultados em tela.</li>
+            <li>Baixa reutilização dos dados importados e alto custo de manutenção (refreshes constantes e lentos).</li>
+            <li>Dificuldade no versionamento dos PBIX, com risco de sobreposição de trabalho.</li>
+            <li>Impossibilidade de desenvolvimento colaborativo: “cada hora um trabalha”.</li>
+          </ul>
+          <img src="import query PBI.png" alt="Imagem ilustrativa de ferramenta">
+        </div>
+      </div>
+      <img src="query-procedimentos.png" alt="Imagem ilustrativa de ferramenta">
+    </div>
+    <!-- SLIDE 6: Com quais recursos a CINFO deveria trabalhar? -->
+    <div class="slide">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="container">
+          <img src="fhemigo teve uma ideia.png" alt="Mascote Ideia" class="mascote-box">
+          <h2>Com quais recursos a CINFO deveria trabalhar?</h2>
+          <h3>Arquitetura Recomendada</h3>
+          <p><strong>Curto-Médio Prazo: Staging / ODS</strong></p>
+          <ul>
+            <li>Criação de tabelas físicas derivadas voltadas ao consumo analítico: “sub-banco” intermediário no FHEPROD (metatabelas: censo, produção profissional, contas).</li>
+            <li>Dados extraídos das tabelas fato do FHEPROD com atualização periódica e incremental em metatabelas (extração controlada de madrugada via ETL: procedure, job, event etc.).</li>
+            <li>Essas estruturas podem receber transformações leves (JOIN, CASE, FLAGS).</li>
+            <li>Melhora significativa de performance e redução do risco operacional.</li>
+          </ul>
+          <p><strong>Médio-Longo Prazo: Data Warehouse</strong></p>
+          <ul>
+            <li>Modelo estruturado para análise, com fatos e dimensões, desacoplando de vez o analítico do transacional.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- SLIDE 7: Quais deveriam ser os processos de trabalho da CINFO? -->
+    <div class="slide">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="container">
+          <img src="fhemigo alegre 2.png" alt="Mascote Ideia" class="mascote-box">
+          <h2>Quais deveriam ser os processos de trabalho da CINFO?</h2>
+          <h3>Coordenação de Informação (CINFO)</h3>
+          <p><strong>A revolução se baseia em 5 princípios:</strong></p>
+          <ol>
+            <li>Proteção absoluta do banco de produção.</li>
+            <li>Separação de responsabilidades (Dados x Métricas).</li>
+            <li>Arquitetura em camadas.</li>
+            <li>Reutilização corporativa.</li>
+            <li>Atualização incremental.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- SLIDE 8: Ferramenta - PBI DataFlows -->
+    <div class="slide full-image-slide">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="full-image-wrap">
+            <div class="full-image-caption">
+              <h2>PBI DataFlows</h2>
+              <p>Centralizam a extração e o preparo dos dados, favorecem reaproveitamento e desempenho por meio de Query Folding e reduzem o retrabalho na manutenção dos painéis.</p>
+            </div>
+          <img src="power_bi_dataflow.png" alt="Imagem ilustrativa de ferramenta">
+          <div class="full-image-overlay">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SLIDE 9: Ferramenta - GitHub (BI as Code) -->
+    <div class="slide full-image-slide">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="full-image-wrap">
+            <div class="full-image-caption">
+              <h2>GitHub (BI as Code)</h2>
+              <p>Com arquivos <strong>.pbir</strong>, o desenvolvimento de BI passa a ter versionamento, histórico de mudanças e rastreabilidade técnica do que foi alterado em cada entrega.</p>
+            </div>
+          <img src="git pbi as code.png" alt="Imagem ilustrativa de ferramenta">
+          <div class="full-image-overlay">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Ferramenta - GitHub Branches -->
+    <div class="slide full-image-slide">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="full-image-wrap">
+            <div class="full-image-caption">
+              <h2>GitHub Branches</h2>
+              <p>Permitem trabalho simultâneo com segurança, separando <strong>main</strong>, <strong>develop</strong> e <strong>feature_x</strong>, evitando conflitos e preservando a estabilidade da versão oficial.</p>
+            </div>
+          <img src="git branches.png" alt="Imagem ilustrativa de ferramenta">
+          <div class="full-image-overlay">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Ferramenta - GitHub Actions -->
+    <div class="slide full-image-slide">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="full-image-wrap">
+            <div class="full-image-caption">
+              <h2>GitHub Actions</h2>
+              <p>Automatizam a publicação e padronizam o pipeline de entrega, reduzindo risco de erro manual e aumentando a segurança entre desenvolvimento, validação e produção.</p>
+            </div>
+          <img src="git actions.png" alt="Imagem ilustrativa de ferramenta">
+          <div class="full-image-overlay">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Projeto CINFO 2.0 -->
+        <div class="slide">
+            <div class="slide-header">
+                <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+                <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+            </div>
+            <div class="slide-inner">
+                <div class="container">
+                    <img src="fhemigo satisfeito.png" alt="Mascote Satisfeito" class="mascote-box">
+                    <h2>Projeto CINFO 2.0</h2>
+                    <p>Refatoração completa dos painéis existentes:</p>
+                    <div class="grid-compare">
+                        <div class="card right">1. Boletim Estratégico (prioridade)</div>
+                        <div class="card right">2. Painel de Leitos (desafio do retrato atual)</div>
+                        <div class="card right">3. Painel FF (aproveitamento dos dataflows)</div>
+                        <div class="card right">4. Contratos Descentralizados (aproveitamento dos dataflows)</div>
+                        <div class="card right">5. Painel de OS (ideal para começar)</div>
+			<div class="card right">6. Fluxo de dados e modelos semânticos para uso externo</div>
+                    </div>
+
+                    <div class="metaphor">
+                        <h4>Ganhos Estratégicos:</h4>
+                        <p>✅ Segurança operacional | ✅ Confiabilidade | ✅ Agilidade | ✅ Sustentabilidade</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: Cronograma -->
+        <div class="slide">
+            <div class="slide-header">
+                <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+                <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+            </div>
+            <div class="slide-inner">
+                <div class="container">
+                    <img src="fhemigos.png" alt="Mascotes Juntos" style="width: 300px; display: block; margin: 0 auto 30px;">
+                    <h2 style="justify-content: center;">Cronograma do Projeto</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="date-badge">19-22/05</div>
+                            <div><strong>Varredura:</strong> Fontes de dados, Tabelas, Colunas, Flags e Funções.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="date-badge">25-29/05</div>
+                            <div><strong>Importação:</strong> Via DataFlow (Tasy-Hist, Tasy-Snapshot, SIGH-Hist, SIGH-Snapshot, DRG, DATASUS, SAPT).</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="date-badge">01-03/06</div>
+                            <div><strong>Validação:</strong> Testes de integridade.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="date-badge">08-19/06</div>
+                            <div><strong>Reconstrução BE:</strong> DataFlows, relacionamentos, DAX e Commits no Github.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="date-badge">22/06-03/07</div>
+                            <div><strong>Reconstrução dos outros painéis:</strong> FF, Leitos, Descentralização e OS.</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px;">
+                        <h3>Posso contar com o patrocínio dos meus superiores e o engajamento dos meus técnicos?</h3>
+                        <a href="#" class="btn-cta" onclick="goTo(0); return false;">VAMOS COMEÇAR!</a>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <img src="Marca_Fhemig.png" alt="FHEMIG" style="height: 30px; opacity: 0.5;"><br><br>
+                © 2026 Fundação Hospitalar do Estado de Minas Gerais - CINFO
+            </div>
+        </div>
+
+    </div><!-- /slides-track -->
+</div><!-- /slider-wrapper -->
+
+<!-- NAVIGATION BAR -->
+<nav class="nav-bar">
+    <button class="nav-btn" id="btnPrev" onclick="changeSlide(-1)" disabled>← Anterior</button>
+
+    <div class="dots" id="dotsContainer"></div>
+
+    <span class="slide-counter" id="slideCounter">1 / 13</span>
+
+    <button class="nav-btn" id="btnNext" onclick="changeSlide(1)">Próximo →</button>
+</nav>
+
+<script>
+    const track = document.getElementById('slidesTrack');
+    const slides = track.querySelectorAll('.slide');
+    const total = slides.length;
+    let current = 0;
+
+    // Build dots
+    const dotsContainer = document.getElementById('dotsContainer');
+    slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.onclick = () => goTo(i);
+        dotsContainer.appendChild(dot);
+    });
+
+    function goTo(index) {
+        current = Math.max(0, Math.min(index, total - 1));
+        track.style.transform = `translateX(-${current * 100}vw)`;
+
+        // Reset scroll of current slide to top
+        slides[current].scrollTop = 0;
+
+        // Update counter
+        document.getElementById('slideCounter').textContent = `${current + 1} / ${total}`;
+
+        // Update buttons
+        document.getElementById('btnPrev').disabled = current === 0;
+        document.getElementById('btnNext').disabled = current === total - 1;
+
+        // Update dots
+        dotsContainer.querySelectorAll('.dot').forEach((d, i) => {
+            d.classList.toggle('active', i === current);
+        });
+    }
+
+    function changeSlide(dir) {
+        goTo(current + dir);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+    });
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+    });
+</script>
+</body>
+</html>
