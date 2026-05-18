@@ -611,7 +611,7 @@
           <h3>Arquitetura Recomendada</h3>
           <p><strong>Curto-Médio Prazo: Staging / ODS</strong></p>
           <ul>
-            <li>Criação de tabelas físicas derivadas voltadas ao consumo analítico: "sub-banco" intermediário no FHEPROD (metatabelas: censo, produção profissional, contas).</li>
+            <li>Criação de um banco OLAP voltado ao consumo analítico a partir do FHEPROD (metatabelas: censo, produção profissional, contas).</li>
             <li>Dados extraídos das tabelas fato do FHEPROD com atualização periódica e incremental em metatabelas (extração controlada de madrugada via ETL: procedure, job, event etc.).</li>
             <li>Essas estruturas podem receber transformações leves (JOIN, CASE, FLAGS).</li>
             <li>Melhora significativa de performance e redução do risco operacional.</li>
@@ -638,20 +638,22 @@
           <span class="section-label">Solução</span>
           <h2>Quais deveriam ser os processos de trabalho da CINFO?</h2>
           <h3>Coordenação de Informação (CINFO)</h3>
-          <p><strong>A revolução se baseia em 5 princípios:</strong></p>
+          <p><strong>A revolução se baseia em 7 princípios:</strong></p>
           <ol>
             <li>Proteção absoluta do banco de produção.</li>
             <li>Separação de responsabilidades (Dados x Métricas).</li>
             <li>Arquitetura em camadas.</li>
             <li>Reutilização corporativa.</li>
             <li>Atualização incremental.</li>
+            <li>Versionamento.</li>
+            <li>Colaboração simultânea</li>
           </ol>
         </div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- SLIDE 11 · PBI DATAFLOWS               -->
+    <!-- SLIDE 11 · PBI QUERY FOLDING              -->
     <!-- ═══════════════════════════════════════ -->
     <div class="slide full-image-slide" style="background: linear-gradient(rgba(246,252,255,0.94), rgba(246,252,255,0.94))">
       <div class="slide-header">
@@ -661,10 +663,10 @@
       <div class="slide-inner">
         <div class="full-image-wrap">
           <div class="full-image-caption">
-            <h2>PBI DataFlows</h2>
-            <p>Centralizam a extração e o preparo dos dados, favorecem reaproveitamento e desempenho por meio de Query Folding e reduzem o retrabalho na manutenção dos painéis.</p>
+            <h2>PBI Query Folding</h2>
+            <p>Técnica de otimização no Power BI em que as etapas de transformação de dados feitas no Power Query são traduzidas para a linguagem nativa da fonte de dados (SQL).</p>
           </div>
-          <img src="power_bi_dataflow.png" alt="Imagem ilustrativa de ferramenta">
+          <img src="query folding.png" alt="Imagem ilustrativa de ferramenta">
           <div class="full-image-overlay"></div>
         </div>
       </div>
@@ -685,6 +687,7 @@
             <p>Centralizam a extração e o preparo dos dados, favorecem reaproveitamento e desempenho por meio de Query Folding e reduzem o retrabalho na manutenção dos painéis.</p>
           </div>
           <img src="power_bi_dataflow.png" alt="Imagem ilustrativa de ferramenta">
+          <img src="DATAFLOW.png" alt="Imagem ilustrativa de ferramenta">
           <div class="full-image-overlay"></div>
         </div>
       </div>
@@ -902,6 +905,34 @@
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SLIDE 20 · Playlist Youtube                  -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="slide" style="background: linear-gradient(rgba(246,252,255,0.94), rgba(246,252,255,0.94))">
+      <div class="slide-header">
+        <img src="Marca_Fhemig.png" alt="Logo FHEMIG" class="logo-fhemig">
+        <div style="font-weight: 600; color: var(--primary);">COORDENAÇÃO DE INFORMAÇÃO - CINFO</div>
+      </div>
+      <div class="slide-inner">
+        <div class="container">
+          <div class="full-image-wrap">
+            <div class="full-image-caption">
+              <h2>Playlist CINFO no Youtube</h2>
+              <p>Vídeos sobre GitHub, arquitetura de dados e Power BI avançado (query foldin, dataflows e atualização incremental)</p>
+            </div>
+              <a class="full-image-wrap" target="_blank" href="https://www.youtube.com/playlist?list=PLL02hqcLCThA2e0KLn9PGfY2_jeECJ2TF">
+                <img src="youtube.png" alt="Playlist Youtube">
+              </a>
+            <div class="full-image-overlay"></div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <img src="Marca_Fhemig.png" alt="FHEMIG" style="height: 30px; opacity: 0.5;"><br><br>
+        © 2026 Fundação Hospitalar do Estado de Minas Gerais - CINFO
+      </div>
+    </div>
+
   </div><!-- /slides-track -->
 </div><!-- /slider-wrapper -->
 
@@ -909,7 +940,7 @@
 <nav class="nav-bar">
   <button class="nav-btn" id="btnPrev" onclick="changeSlide(-1)" disabled>← Anterior</button>
   <div class="dots" id="dotsContainer"></div>
-  <span class="slide-counter" id="slideCounter">1 / 19</span>
+  <span class="slide-counter" id="slideCounter">1 / 20</span>
   <button class="nav-btn" id="btnNext" onclick="changeSlide(1)">Próximo →</button>
 </nav>
 
